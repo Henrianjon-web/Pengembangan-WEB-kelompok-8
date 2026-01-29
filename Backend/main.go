@@ -22,6 +22,7 @@ type Product struct {
 	ID           uint   `gorm:"primaryKey" json:"id"`
 	Nama         string `json:"nama"`
 	Harga        int    `json:"harga"`
+	Deskripsi    string `json:"deskripsi"`
 	Kategori     string `json:"kategori"` // 'makanan' atau 'minuman'
 	Gambar       string `json:"gambar"`
 	IsBestSeller bool   `json:"is_best_seller"`
@@ -55,8 +56,7 @@ func main() {
 	initDB()
 	r := gin.Default()
 
-	// --- MIDDLEWARE ---
-
+	// --- MIDDLEWARE CORS ---
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -112,14 +112,12 @@ func main() {
 
 	// --- ENDPOINTS: PRODUCTS ---
 
-	// Ambil semua produk (untuk Homepage & Admin)
 	r.GET("/api/products", func(c *gin.Context) {
 		var products []Product
 		db.Find(&products)
 		c.JSON(http.StatusOK, products)
 	})
 
-	// Tambah produk (Fitur Admin)
 	r.POST("/api/products", func(c *gin.Context) {
 		var input Product
 		if err := c.ShouldBindJSON(&input); err != nil {
@@ -130,7 +128,6 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "Produk berhasil ditambah!"})
 	})
 
-	// Hapus produk (Fitur Admin)
 	r.DELETE("/api/products/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		db.Delete(&Product{}, id)
@@ -148,6 +145,10 @@ func main() {
 		db.Create(&input)
 		c.JSON(http.StatusOK, gin.H{"message": "Alamat berhasil disimpan!"})
 	})
+
+	// --- ENDPOINT: MIDTRANS PAYMENT ---
+	// Ini akan memanggil fungsi HandlePayment dari file payment_handler.go
+	r.POST("/api/pay", HandlePayment)
 
 	r.Run(":8080")
 }
