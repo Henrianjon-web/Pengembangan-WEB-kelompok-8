@@ -28,7 +28,7 @@ Label Best Seller: Fitur untuk menonjolkan menu andalan agar lebih mudah ditemuk
 
 **🛠️ Teknologi yang Digunakan**
 
-Frontend: Next.js 15+ (App Router) dan Tailwind CSS.
+Frontend: Next.js(App Router) dan Tailwind CSS.
 
 Backend: Golang & Gin Gonic.
 
